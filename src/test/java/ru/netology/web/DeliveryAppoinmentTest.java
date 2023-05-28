@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 import ru.netology.model.DataGenerator;
 
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -26,9 +25,11 @@ public class DeliveryAppoinmentTest {
         val phone = user.getPhoneNumber();
         val city = user.getCity();
         System.out.println(city);
+
         $("span[data-test-id='city'] input").setValue(city.substring(0,2));
         $$("div.menu div.menu-item").find(exactText(city)).click();
-        $("[data-test-id=date] input").doubleClick().sendKeys(Keys.DELETE);
+
+        $("span[data-test-id='date'] input.input__control").sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.DELETE);
         $("span[data-test-id='date'] input.input__control").setValue(date1);
 
         $("span[data-test-id='name'] input").setValue(name);
@@ -38,7 +39,7 @@ public class DeliveryAppoinmentTest {
         $$("button").find(exactText("Запланировать")).click();
         $("div[data-test-id='success-notification'] button").waitUntil(visible, 15000).click();
 
-        $("[data-test-id=date] input").doubleClick().sendKeys(Keys.DELETE);
+        $("span[data-test-id='date'] input.input__control").sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.DELETE);
         $("span[data-test-id='date'] input.input__control").setValue(date2);
 
         $$("button").find(exactText("Запланировать")).click();

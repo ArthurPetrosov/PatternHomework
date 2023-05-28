@@ -3,7 +3,7 @@ plugins {
     id "io.freefair.lombok" version "5.0.0-rc4"
 }
 
-group 'ru.netology.web'
+group 'ru.netology'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
@@ -20,7 +20,6 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.5.2'
     testImplementation group: 'com.codeborne', name: 'selenide', version: '5.6.1'
     implementation 'com.github.javafaker:javafaker:1.0.2'
-
 }
 
 test {
