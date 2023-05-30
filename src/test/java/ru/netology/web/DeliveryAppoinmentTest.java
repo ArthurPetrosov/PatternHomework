@@ -1,51 +1,66 @@
 package ru.netology.web;
 
-import lombok.val;
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
+import lombok.var;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
-import ru.netology.model.DataGenerator;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.*;
+
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
-
 
 public class DeliveryAppoinmentTest {
 
-    private String date1 = LocalDate.now().plusDays(4).format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-    private String date2 = LocalDate.now().plusDays(10).format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+    @BeforeEach
+    void setUP() {
+        Configuration.holdBrowserOpen = true;
+        open("http://localhost:9999/");
+
+    }
+
+    @AfterEach
+    void tearDown() {
+        closeWindow();
+    }
+
 
     @Test
-    void shouldRegisterCardDelivery() {
-        open("http://localhost:9999");
-        val user = DataGenerator.Registration.generateByFaker("ru");
-        val name = user.getName();
-        val phone = user.getPhoneNumber();
-        val city = user.getCity();
-        System.out.println(city);
+    @DisplayName("Перепланирование встречи")
+    void shouldSuccessfulPlanAndReplanMeeting() {
 
-        $("span[data-test-id='city'] input").setValue(city.substring(0,2));
-        $$("div.menu div.menu-item").find(exactText(city)).click();
+        $("[data-test-id='city'] .input__control").setValue(DataGenerator.generateCity());
+        $(".menu-item__control").click();
 
-        $("span[data-test-id='date'] input.input__control").sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.DELETE);
-        $("span[data-test-id='date'] input.input__control").setValue(date1);
+        var daysToAddForFirstMeeting = 4;
+        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
+        var daysToAddForSecondMeeting = 7;
+        var secondMeetingDate = DataGenerator.generateDate(daysToAddForSecondMeeting);
 
-        $("span[data-test-id='name'] input").setValue(name);
-        $("span[data-test-id='phone'] input").setValue(phone);
+        $("[data-test-id='date'] .input__control").doubleClick().sendKeys(Keys.DELETE);
+        $("[data-test-id='date'] .input__control").doubleClick().sendKeys(firstMeetingDate);
 
-        $("label[data-test-id='agreement']").click();
-        $$("button").find(exactText("Запланировать")).click();
-        $("div[data-test-id='success-notification'] button").waitUntil(visible, 15000).click();
+        $("[data-test-id='name'] .input__control").setValue(DataGenerator.generateName("ru"));
+        $("[data-test-id='phone'] .input__control").setValue(DataGenerator.generatePhone("ru"));
+        $("[data-test-id='agreement']").click();
 
-        $("span[data-test-id='date'] input.input__control").sendKeys(Keys.chord(Keys.CONTROL, "a") + Keys.DELETE);
-        $("span[data-test-id='date'] input.input__control").setValue(date2);
+        $(".button__text").click();
 
-        $$("button").find(exactText("Запланировать")).click();
-        $("div[data-test-id='replan-notification'] button").waitUntil(visible, 15000).click();
-        $("div.notification__content").waitUntil(text("Встреча успешно запланирована на " + date2),
-                15000);
+        $("[data-test-id='date'] .input__control").doubleClick().sendKeys(Keys.DELETE);
+        $("[data-test-id='date'] .input__control").doubleClick().sendKeys(secondMeetingDate);
+
+        $(".button__text").click();
+        $(".notification__content .button__content").click();
+        $(".notification__content")
+                .shouldHave(text("Встреча успешно запланирована на " + secondMeetingDate), Duration.ofSeconds(4))
+                .shouldBe(Condition.visible);
+
+
     }
-}
 
+}
