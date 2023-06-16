@@ -1,1 +1,2 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/icflo1d517cm5swe?svg=true)](https://ci.appveyor.com/project/ArthurPetrosov/patternhomework)
+![Screenshot 2023-06-15 at 22.07.27.png](..%2F..%2F..%2FDesktop%2FScreenshot%202023-06-15%20at%2022.07.27.png)
